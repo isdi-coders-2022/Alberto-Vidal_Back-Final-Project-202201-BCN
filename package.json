@@ -9,7 +9,8 @@
     "chalk": "4",
     "debug": "^4.3.3",
     "dotenv": "^16.0.0",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "morgan": "^1.10.0"
   },
   "scripts": {
     "start": "node src",

@@ -10,4 +10,4 @@ const serverError = (err, req, res, next) => {
   res.status(errorStatus).json({ error: errorMessage });
 };
 
-module.exports = { notFound };
+module.exports = { notFound, serverError };
