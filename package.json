@@ -6,20 +6,26 @@
   "author": "Alberto Vidal <alberto_vidalm@protonmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/jest": "^27.4.1",
     "chalk": "4",
     "debug": "^4.3.3",
     "dotenv": "^16.0.0",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "jest": "^27.5.1",
+    "morgan": "^1.10.0"
   },
   "scripts": {
     "start": "node src",
-    "prepare": "husky install"
+    "dev": "nodemon src",
+    "prepare": "husky install",
+    "test": "jest --passWithNoTests"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.2",
-    "husky": "^7.0.0"
+    "husky": "^7.0.0",
+    "nodemon": "^2.0.15"
   }
 }
