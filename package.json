@@ -1,0 +1,14 @@
+{
+  "name": "projectsnap-back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/isdi-coders-2022/Alberto-Vidal_Back-Final-Project-202201-BCN.git",
+  "author": "Alberto Vidal <alberto_vidalm@protonmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "4",
+    "debug": "^4.3.3",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  }
+}
