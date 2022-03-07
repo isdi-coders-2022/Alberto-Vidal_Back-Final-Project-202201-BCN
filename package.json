@@ -10,5 +10,12 @@
     "debug": "^4.3.3",
     "dotenv": "^16.0.0",
     "express": "^4.17.3"
+  },
+  "scripts": {
+    "start": "node src",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0"
   }
 }
