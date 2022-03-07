@@ -6,16 +6,19 @@
   "author": "Alberto Vidal <alberto_vidalm@protonmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/jest": "^27.4.1",
     "chalk": "4",
     "debug": "^4.3.3",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "jest": "^27.5.1",
     "morgan": "^1.10.0"
   },
   "scripts": {
     "start": "node src",
     "dev": "nodemon src",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest --passWithNoTests"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
