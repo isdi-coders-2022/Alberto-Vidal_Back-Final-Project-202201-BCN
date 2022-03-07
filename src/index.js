@@ -5,7 +5,6 @@ const chalk = require("chalk");
 
 const app = express();
 const port = process.env.PORT || 5555;
-console.log(process.env.PORT);
 
 const server = app.listen(port, () => {
   debug(chalk.bgGreen.black(`server listening at http://localhost:${port}`));
