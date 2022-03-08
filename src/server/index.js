@@ -1,10 +1,12 @@
 const express = require("express");
+const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 const { notFound, serverError } = require("./middlewares/errors");
 const projectsRouter = require("./routers/projectsRouter");
 
 const app = express();
 
+app.use(helmet());
 app.use(morgan("dev"));
 
 app.use("/projects", projectsRouter);
