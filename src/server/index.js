@@ -1,19 +1,15 @@
-const debug = require("debug")("PS_api:serer:");
-const chalk = require("chalk");
+const express = require("express");
+const morgan = require("morgan");
+const { notFound, serverError } = require("./middlewares/errors");
+const projectsRouter = require("./routers/projectsRouter");
 
-const raiseServer = (app, port) =>
-  new Promise((resolve, reject) => {
-    const server = app.listen(port, () => {
-      debug(
-        chalk.bgGreen.black(`server listening at http://localhost:${port}`)
-      );
-      resolve();
-    });
+const app = express();
 
-    server.on("error", () => {
-      debug(chalk.red("error raising server"));
-      reject();
-    });
-  });
+app.use(morgan("dev"));
 
-module.exports = raiseServer;
+app.use("/projects", projectsRouter);
+
+app.use(notFound);
+app.use(serverError);
+
+module.exports = app;
