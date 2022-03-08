@@ -3,4 +3,6 @@ const { getAllProjects } = require("../controllers/projectsControllers");
 
 const router = express.Router();
 
-router.get("projects", getAllProjects);
+router.get("/all", getAllProjects);
+
+module.exports = router;
