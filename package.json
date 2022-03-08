@@ -34,5 +34,16 @@
     "husky": "^7.0.0",
     "nodemon": "^2.0.15",
     "supertest": "^6.2.2"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!**/node_modules/**",
+      "!src/**/*test.js",
+      "src/index.js",
+      "src/**/*.test.js",
+      "src/server/raiseServer.js",
+      "src/database/index.js"
+    ]
   }
 }
