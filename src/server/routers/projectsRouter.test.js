@@ -18,19 +18,15 @@ const projectsDatabase = [
     author: ObjectID("62275e1f60e1a2984ec63453"),
     likes: 3,
     preview: "image.png",
-    links: {
-      production: "vercel.app/project1",
-      repo: "github.com/project1",
-    },
+    production: "vercel.app/project1",
+    repo: "github.com/project1",
   },
   {
     author: ObjectID("62275e1f60e1a2984ec63454"),
     likes: 4,
     preview: "image.png",
-    links: {
-      production: "vercel.app/project1",
-      repo: "github.com/project1",
-    },
+    production: "vercel.app/project1",
+    repo: "github.com/project1",
   },
 ];
 
