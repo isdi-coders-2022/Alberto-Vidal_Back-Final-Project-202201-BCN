@@ -11,6 +11,7 @@ const UserSchema = new Schema({
   posts: { type: Schema.Types.ObjectId, ref: "project" },
   bookmarks: { type: Schema.Types.ObjectId, ref: "project" },
   liked: { type: Schema.Types.ObjectId, ref: "project" },
+  avatar: { type: String, required: true },
 });
 
 module.exports = UserSchema;
