@@ -21,7 +21,7 @@ describe("Given a getAllProjets controller", () => {
 
       await getAllProjects(req, res, next);
 
-      expect(res.json).toHaveBeenCalledWith(expectedProjects);
+      expect(res.json).toHaveBeenCalledWith({ projects: expectedProjects });
     });
   });
 
