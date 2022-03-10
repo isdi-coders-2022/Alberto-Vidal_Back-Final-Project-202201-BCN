@@ -62,6 +62,7 @@ describe("Given a projects router", () => {
         ...project,
         author: loggedUser,
       }));
+
       const { body } = await request(app).get("/projects/all");
 
       expect(body).toHaveLength(expectedProjects.length);
