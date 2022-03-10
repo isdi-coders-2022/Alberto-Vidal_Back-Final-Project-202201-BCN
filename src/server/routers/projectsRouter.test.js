@@ -65,8 +65,10 @@ describe("Given a projects router", () => {
 
       const { body } = await request(app).get("/projects/all");
 
-      expect(body).toHaveLength(expectedProjects.length);
-      expect(body[0].author.name).toBe(expectedProjects[0].author.name);
+      expect(body.projects).toHaveLength(expectedProjects.length);
+      expect(body.projects[0].author.name).toBe(
+        expectedProjects[0].author.name
+      );
     });
   });
 });
