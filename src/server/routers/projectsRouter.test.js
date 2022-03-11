@@ -47,6 +47,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await Project.deleteMany({});
+  await User.deleteMany({});
 });
 
 afterAll(async () => {
@@ -63,12 +64,29 @@ describe("Given a projects router", () => {
         author: loggedUser,
       }));
 
-      const { body } = await request(app).get("/projects/all");
+      const { body } = await request(app).get("/projects/all").expect(200);
 
       expect(body.projects).toHaveLength(expectedProjects.length);
       expect(body.projects[0].author.username).toBe(
         expectedProjects[0].author.username
       );
+    });
+  });
+
+  describe("When it receives a request at /id", () => {
+    test("Then it should respond {}", async () => {
+      const initialProjects = await Project.find();
+      // eslint-disable-next-line no-underscore-dangle
+      const idToDelete = ObjectID(initialProjects[0]._id).toHexString();
+      const expectedResponse = {};
+
+      const { body } = await request(app)
+        .delete(`/projects/delete/${idToDelete}`)
+        .expect(200);
+      const projects = await Project.find();
+
+      expect(body).toEqual(expectedResponse);
+      expect(projects).toHaveLength(initialProjects.length - 1);
     });
   });
 });
