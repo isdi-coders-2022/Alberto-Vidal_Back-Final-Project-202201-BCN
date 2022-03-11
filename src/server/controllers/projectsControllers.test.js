@@ -1,7 +1,8 @@
 const Project = require("../../database/models/Project");
-const { getAllProjects } = require("./projectsControllers");
+const { getAllProjects, deleteProject } = require("./projectsControllers");
 
 jest.spyOn(Project, "find").mockReturnThis();
+const mockProjectDelete = jest.spyOn(Project, "deleteOne");
 const mockProjectPopulate = jest.spyOn(Project, "populate");
 
 describe("Given a getAllProjets controller", () => {
@@ -38,6 +39,63 @@ describe("Given a getAllProjets controller", () => {
       await getAllProjects(req, res, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
+    });
+  });
+});
+
+describe("Given a deleteproject controller", () => {
+  describe("When it's called with a request with invalid id", () => {
+    test("Then it should call method next with error message 'invalid id' and status 400", async () => {
+      const expectedError = { status: 400, message: "invalid id" };
+      const next = jest.fn();
+      const res = null;
+      const req = {
+        params: {
+          id: null,
+        },
+      };
+
+      await deleteProject(req, res, next);
+      const nextArgs = next.mock.calls[0][0];
+
+      expect(nextArgs.status).toBe(expectedError.status);
+      expect(nextArgs.message).toBe(expectedError.message);
+    });
+  });
+
+  describe("When it's called with a request with a valid id", () => {
+    test("Then it should call method json of res with {}", async () => {
+      mockProjectDelete.mockResolvedValue(null);
+      const expectedResponse = {};
+      const next = null;
+      const res = { json: jest.fn() };
+      const req = {
+        params: {
+          id: "asdasd3232sasdasd",
+        },
+      };
+
+      await deleteProject(req, res, next);
+
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+  });
+
+  describe("When it's called and the method delete of project throws an error", () => {
+    test("Then it should call function next with an error with message 'error deleting project'", async () => {
+      const expectedErrorMessage = "error deleting project";
+      const next = jest.fn();
+      const res = null;
+      const req = {
+        params: {
+          id: "asdasd3232sasdasd",
+        },
+      };
+
+      await deleteProject(req, res, next);
+      const errorMessage = next.mock.calls[0][0].message;
+
+      expect(errorMessage).toBe(expectedErrorMessage);
     });
   });
 });

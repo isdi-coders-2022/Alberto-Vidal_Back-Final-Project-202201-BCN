@@ -15,4 +15,24 @@ const getAllProjects = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getAllProjects };
+
+const deleteProject = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    const error = new Error("invalid id");
+    error.status = 400;
+    next(error);
+    return;
+  }
+
+  try {
+    await Project.deleteOne({ id });
+    res.json({});
+  } catch (error) {
+    error.message = "error deleting project";
+    next(error);
+  }
+};
+
+module.exports = { getAllProjects, deleteProject };
