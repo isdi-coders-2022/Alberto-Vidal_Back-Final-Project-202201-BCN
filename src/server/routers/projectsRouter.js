@@ -1,9 +1,12 @@
 const express = require("express");
-const { getAllProjects } = require("../controllers/projectsControllers");
+const {
+  getAllProjects,
+  deleteProject,
+} = require("../controllers/projectsControllers");
 
 const router = express.Router();
 
 router.get("/all", getAllProjects);
-router.delete("/delete/:id");
+router.delete("/delete/:id", deleteProject);
 
 module.exports = router;
