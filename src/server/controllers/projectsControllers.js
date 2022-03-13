@@ -35,4 +35,15 @@ const deleteProject = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProjects, deleteProject };
+const createNewProject = async (req, res, next) => {
+  const newProject = req.body;
+  try {
+    const newProjectCreated = await Project.create(newProject);
+    res.status(201).json(newProjectCreated);
+  } catch (error) {
+    error.message = "error creating project";
+    next(error);
+  }
+};
+
+module.exports = { getAllProjects, deleteProject, createNewProject };

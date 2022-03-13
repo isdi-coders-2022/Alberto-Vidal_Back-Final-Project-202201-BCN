@@ -1,9 +1,14 @@
 const Project = require("../../database/models/Project");
-const { getAllProjects, deleteProject } = require("./projectsControllers");
+const {
+  getAllProjects,
+  deleteProject,
+  createNewProject,
+} = require("./projectsControllers");
 
 jest.spyOn(Project, "find").mockReturnThis();
 const mockProjectDelete = jest.spyOn(Project, "deleteOne");
 const mockProjectPopulate = jest.spyOn(Project, "populate");
+const mockProjectCreate = jest.spyOn(Project, "create");
 
 describe("Given a getAllProjets controller", () => {
   describe("When it's called and database provides an array of projects", () => {
@@ -96,6 +101,48 @@ describe("Given a deleteproject controller", () => {
       const errorMessage = next.mock.calls[0][0].message;
 
       expect(errorMessage).toBe(expectedErrorMessage);
+    });
+  });
+});
+
+describe("Given a createNewProject controller", () => {
+  describe("When it's called with a project in the request body", () => {
+    test("Then it should call method status and json of res with 201 and the new project returned from the database", async () => {
+      const project = {
+        author: "author",
+        preview: "preview",
+        production: "production",
+        repo: "repo",
+      };
+      const projectWithId = { ...project, id: "id" };
+      mockProjectCreate.mockImplementation(() => projectWithId);
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = null;
+      const req = { body: project };
+      const expectedStatus = 201;
+
+      await createNewProject(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(projectWithId);
+    });
+  });
+
+  describe("When it's called with a project in the request body and the connection with db fails", () => {
+    test("Then it should call next with ane rror with message 'error creating project'", async () => {
+      const errorMessage = "error creating project";
+      mockProjectCreate.mockRejectedValue(new Error());
+      const res = null;
+      const next = jest.fn();
+      const req = { body: {} };
+
+      await createNewProject(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
     });
   });
 });
