@@ -56,7 +56,7 @@ afterAll(async () => {
 });
 
 describe("Given a projects router", () => {
-  describe("When it receives a request at /projects/all", () => {
+  describe("When it receives a request at /projects/all with method get", () => {
     test("Then it should respond with all the projects in the database", async () => {
       const loggedUser = await User.findById("62275e1f60e1a2984ec63453");
       const expectedProjects = projectsDatabase.map((project) => ({
@@ -73,7 +73,7 @@ describe("Given a projects router", () => {
     });
   });
 
-  describe("When it receives a request at /id", () => {
+  describe("When it receives a request at /id with method delete", () => {
     test("Then it should respond {}", async () => {
       const initialProjects = await Project.find();
       // eslint-disable-next-line no-underscore-dangle
@@ -87,6 +87,34 @@ describe("Given a projects router", () => {
 
       expect(body).toEqual(expectedResponse);
       expect(projects).toHaveLength(initialProjects.length - 1);
+    });
+  });
+
+  describe("When it receves a request at /new with method post with incorrect project inside", () => {
+    test("Then it should respond with { error: 'Validation Failed' } and status 500", async () => {
+      const expectedResponse = { error: "Validation Failed" };
+
+      const { body } = await request(app).post(`/projects/new`).expect(500);
+
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it receives a request at /new with method post with correct project inside", () => {
+    test("Then it should respond with status 201 and the project with id", async () => {
+      const project = {
+        author: ObjectID().toHexString(),
+        preview: "preview",
+        repo: "repo",
+        production: "production",
+      };
+
+      const { body } = await request(app)
+        .post(`/projects/new`)
+        .send(project)
+        .expect(201);
+
+      expect(body).toHaveProperty("id");
     });
   });
 });
