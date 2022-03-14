@@ -1,3 +1,4 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../../database/models/User");
@@ -17,13 +18,11 @@ const userLogin = async (req, res, next) => {
       username,
     } = await User.findOne({ username: requestedUsername });
     const isCorrectPassword = await bcrypt.compare(password, hash);
-
     if (!isCorrectPassword) {
       throw new Error();
     }
 
     const token = jwt.sign({ name, username, id }, process.env.SECRET);
-
     res.json({ token });
   } catch (error) {
     error.message = invalidCredentialsError.message;
