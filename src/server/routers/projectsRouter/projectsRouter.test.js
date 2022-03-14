@@ -2,10 +2,10 @@ const request = require("supertest");
 const { default: ObjectID } = require("bson-objectid");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
-const connectDB = require("../../database");
-const Project = require("../../database/models/Project");
-const app = require("..");
-const User = require("../../database/models/User");
+const connectDB = require("../../../database");
+const Project = require("../../../database/models/Project");
+const app = require("../..");
+const User = require("../../../database/models/User");
 
 let mongod;
 beforeAll(async () => {
