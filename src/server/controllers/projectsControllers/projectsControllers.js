@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-const User = require("../../database/models/User");
-const Project = require("../../database/models/Project");
+const User = require("../../../database/models/User");
+const Project = require("../../../database/models/Project");
 
 const getAllProjects = async (req, res, next) => {
   try {
