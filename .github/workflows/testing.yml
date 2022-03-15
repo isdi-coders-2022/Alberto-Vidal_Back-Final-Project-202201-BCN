@@ -1,6 +1,8 @@
 name: Testing on push
 
 on: push
+env:
+  SECRET: ${{test.SECRET}}
 
 jobs:
   test:
