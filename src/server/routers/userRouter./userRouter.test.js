@@ -85,7 +85,7 @@ describe("Given a /user/login endpoint", () => {
       const loginRequestBody = { username: registeredUser.username, password };
 
       const { body } = await request(app).post(endpoint).send(loginRequestBody);
-
+      console.log(body);
       expect(body).toHaveProperty("token");
     });
   });
