@@ -1,3 +1,4 @@
+require("dotenv").config();
 const request = require("supertest");
 const bcrypt = require("bcrypt");
 const { MongoMemoryServer } = require("mongodb-memory-server");
