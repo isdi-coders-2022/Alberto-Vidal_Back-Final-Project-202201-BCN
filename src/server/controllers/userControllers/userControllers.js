@@ -22,7 +22,7 @@ const userLogin = async (req, res, next) => {
       throw new Error();
     }
 
-    const token = jwt.sign({ name, username, id }, process.env.SECRET);
+    const token = jwt.sign({ name, username, id }, process.env.JWT_SECRET);
     res.json({ token });
   } catch (error) {
     error.message = invalidCredentialsError.message;
