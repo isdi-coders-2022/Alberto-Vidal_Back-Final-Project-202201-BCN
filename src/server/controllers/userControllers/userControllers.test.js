@@ -86,7 +86,7 @@ describe("Given a userRegister Controller", () => {
   describe("When it's called with a taken username in the request", () => {
     test("Then it should call function next with an error with message 'taken username' and status 409", async () => {
       mockCreateUser.mockRejectedValue(new Error());
-      const req = { body: { username: "paco" } };
+      const req = { body: { username: "paco", password: "1234" } };
       const res = null;
       const next = jest.fn();
       const errorMessage = "username taken";
@@ -100,7 +100,7 @@ describe("Given a userRegister Controller", () => {
 
   describe("When it's called with a correct user in the request", () => {
     test("Then it should call methods status and json of res with 201 and {created: username}", async () => {
-      const user = { username: "paco" };
+      const user = { username: "paco", password: "1234" };
       mockCreateUser.mockResolvedValue(null);
       const req = { body: user };
       const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };

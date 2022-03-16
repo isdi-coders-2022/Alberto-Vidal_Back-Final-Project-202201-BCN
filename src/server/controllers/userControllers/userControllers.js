@@ -33,8 +33,12 @@ const userLogin = async (req, res, next) => {
 
 const userRegister = async (req, res, next) => {
   const user = req.body;
+  const userWithHashedPassword = {
+    ...user,
+    password: await bcrypt.hash(user.password, 10),
+  };
   try {
-    await User.create(user);
+    await User.create(userWithHashedPassword);
 
     res.status(201).json({ created: user.username });
   } catch (error) {
