@@ -31,4 +31,17 @@ const userLogin = async (req, res, next) => {
   }
 };
 
-module.exports = { userLogin };
+const userRegister = async (req, res, next) => {
+  const user = req.body;
+  try {
+    await User.create(user);
+
+    res.status(201).json({ created: user.username });
+  } catch (error) {
+    error.message = "username taken";
+    error.status = 409;
+    next(error);
+  }
+};
+
+module.exports = { userLogin, userRegister };
