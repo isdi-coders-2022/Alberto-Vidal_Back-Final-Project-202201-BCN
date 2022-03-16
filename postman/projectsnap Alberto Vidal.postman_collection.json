@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "10ff1816-e801-4a0d-99bb-661f64e4fee5",
+    "name": "projectsnap Alberto Vidal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "get all projects",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{projects}}all",
+          "host": ["{{projects}}all"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create new project",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\"author\": \"622f3c73ca9fdd4917e77a88\",\n\"repo\": \"https://alberto-vidal-front-final-project-202201-bcn-phi.vercel.app/\"\n,\"preview\": \"https://alberto-vidal-front-final-project-202201-bcn-phi.vercel.app/\",\n\"production\": \"https://alberto-vidal-front-final-project-202201-bcn-phi.vercel.app/\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{projects}}new",
+          "host": ["{{projects}}new"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete project",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{projects}}delete/:id",
+          "host": ["{{projects}}delete"],
+          "path": [":id"],
+          "query": [
+            {
+              "key": null,
+              "value": "",
+              "disabled": true
+            }
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": null
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "user login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{user}}login",
+          "host": ["{{user}}login"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "origin",
+      "value": "https://projectsnap.onrender.com/",
+      "type": "string"
+    },
+    {
+      "key": "projects",
+      "value": "https://projectsnap.onrender.com/projects/",
+      "type": "string"
+    },
+    {
+      "key": "user",
+      "value": "https://projectsnap.onrender.com/user/",
+      "type": "string"
+    }
+  ]
+}
