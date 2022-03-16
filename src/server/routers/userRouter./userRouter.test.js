@@ -72,6 +72,7 @@ describe("Given a /user/login endpoint", () => {
 
   describe("When it receives a request with method post with a registered username and correct password", () => {
     test("Then it should respond a token", async () => {
+      console.log(process.env);
       const password = "1234";
       const hashedPassword = await bcrypt.hash(password, 2);
       const registeredUser = {
