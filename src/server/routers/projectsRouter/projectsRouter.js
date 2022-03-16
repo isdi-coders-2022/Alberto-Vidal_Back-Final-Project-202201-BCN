@@ -4,10 +4,10 @@ const {
   getAllProjects,
   deleteProject,
   createNewProject,
-} = require("../controllers/projectsControllers");
+} = require("../../controllers/projectsControllers/projectsControllers");
 const {
   createProjectValidator,
-} = require("../middlewares/validators/projectValidators");
+} = require("../../middlewares/validators/projectValidators");
 
 const router = express.Router();
 
