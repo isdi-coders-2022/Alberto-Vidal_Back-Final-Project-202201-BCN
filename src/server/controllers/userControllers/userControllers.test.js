@@ -1,8 +1,9 @@
 const bcrypt = require("bcrypt");
 const User = require("../../../database/models/User");
-const { userLogin } = require("./userControllers");
+const { userLogin, userRegister } = require("./userControllers");
 
 const mockFindOneUser = jest.spyOn(User, "findOne");
+const mockCreateUser = jest.spyOn(User, "create");
 
 describe("Given a login user controller", () => {
   describe("When it's called with a username in the request that is not registered", () => {
@@ -77,6 +78,40 @@ describe("Given a login user controller", () => {
       await userLogin(req, res, next);
 
       expect(res.json).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("Given a userRegister Controller", () => {
+  describe("When it's called with a taken username in the request", () => {
+    test("Then it should call function next with an error with message 'taken username' and status 409", async () => {
+      mockCreateUser.mockRejectedValue(new Error());
+      const req = { body: { username: "paco" } };
+      const res = null;
+      const next = jest.fn();
+      const errorMessage = "username taken";
+
+      await userRegister(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it's called with a correct user in the request", () => {
+    test("Then it should call methods status and json of res with 201 and {created: username}", async () => {
+      const user = { username: "paco" };
+      mockCreateUser.mockResolvedValue(null);
+      const req = { body: user };
+      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+      const next = null;
+      const expectedStatus = 201;
+      const expectedjson = { created: user.username };
+
+      await userRegister(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(expectedjson);
     });
   });
 });
