@@ -39,7 +39,11 @@ const createNewProject = async (req, res, next) => {
   const newProject = req.body;
   try {
     const newProjectCreated = await Project.create(newProject);
-    res.status(201).json(newProjectCreated);
+    const populatedProject = await newProjectCreated.populate(
+      "author",
+      "username avatar id"
+    );
+    res.status(201).json(populatedProject);
   } catch (error) {
     error.message = "error creating project";
     next(error);
