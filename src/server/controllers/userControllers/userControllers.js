@@ -16,13 +16,17 @@ const userLogin = async (req, res, next) => {
       id,
       name,
       username,
+      avatar,
     } = await User.findOne({ username: requestedUsername });
     const isCorrectPassword = await bcrypt.compare(password, hash);
     if (!isCorrectPassword) {
       throw new Error();
     }
 
-    const token = jwt.sign({ name, username, id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { name, username, id, avatar },
+      process.env.JWT_SECRET
+    );
     res.json({ token });
   } catch (error) {
     error.message = invalidCredentialsError.message;
