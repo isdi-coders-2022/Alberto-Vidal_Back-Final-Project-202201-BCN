@@ -115,7 +115,9 @@ describe("Given a createNewProject controller", () => {
         repo: "repo",
       };
       const projectWithId = { ...project, id: "id" };
-      mockProjectCreate.mockImplementation(() => projectWithId);
+      mockProjectCreate.mockImplementation(() => ({
+        populate: () => projectWithId,
+      }));
       const res = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
