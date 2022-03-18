@@ -50,7 +50,9 @@
       "src/**/*.test.js",
       "!src/server/raiseServer.js",
       "src/database/index.js",
-      "!src/fillDB/**"
+      "!src/fillDB/**",
+      "!src/index.js",
+      "!src/database/index.js"
     ]
   }
 }

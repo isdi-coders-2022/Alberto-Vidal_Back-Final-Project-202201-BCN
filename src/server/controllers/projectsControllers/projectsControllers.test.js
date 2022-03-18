@@ -3,6 +3,7 @@ const {
   getAllProjects,
   deleteProject,
   createNewProject,
+  editProject,
 } = require("./projectsControllers");
 
 jest.spyOn(Project, "find").mockReturnThis();
@@ -145,6 +146,29 @@ describe("Given a createNewProject controller", () => {
 
       expect(next).toHaveBeenCalled();
       expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+});
+
+describe("Given a editProject controller", () => {
+  describe("When it's called with an invalid project in the request", () => {
+    test("Then it should call method rext with an error with message 'error updating project'", async () => {
+      const expectedErrorMessage = "error updating project";
+      const res = null;
+      const req = {
+        body: {
+          something: "something",
+        },
+      };
+      const next = jest.fn();
+
+      await editProject(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(
+        "message",
+        expectedErrorMessage
+      );
     });
   });
 });
