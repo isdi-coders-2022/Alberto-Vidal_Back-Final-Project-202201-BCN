@@ -50,4 +50,33 @@ const createNewProject = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProjects, deleteProject, createNewProject };
+const editProject = async (req, res, next) => {
+  const projectToUpdate = req.body;
+  try {
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectToUpdate.id,
+      {
+        ...projectToUpdate,
+        author: projectToUpdate.author.id,
+      },
+      { new: true }
+    );
+
+    const populatedUpdatedProject = await updatedProject.populate(
+      "author",
+      "username avatar id"
+    );
+
+    res.status(200).json(populatedUpdatedProject);
+  } catch (error) {
+    error.message = "error updating project";
+    next(error);
+  }
+};
+
+module.exports = {
+  getAllProjects,
+  deleteProject,
+  createNewProject,
+  editProject,
+};
