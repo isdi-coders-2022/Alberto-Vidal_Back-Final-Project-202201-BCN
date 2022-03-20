@@ -7,7 +7,7 @@ const auth = (req, res, next) => {
       : null;
 
     if (token) {
-      jwt.verify(token, process.env.SECRET);
+      jwt.verify(token, process.env.JWT_SECRET);
       next();
       return;
     }
