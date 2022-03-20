@@ -2,10 +2,14 @@ const request = require("supertest");
 const { default: ObjectID } = require("bson-objectid");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
+const jsonwebtoken = require("jsonwebtoken");
 const connectDB = require("../../../database");
 const Project = require("../../../database/models/Project");
 const app = require("../..");
 const User = require("../../../database/models/User");
+
+jest.spyOn(jsonwebtoken, "verify").mockReturnValue();
+const token = "teouthoetnuhoenthuantuhs";
 
 let mongod;
 beforeAll(async () => {
@@ -64,7 +68,10 @@ describe("Given a projects router", () => {
         author: loggedUser,
       }));
 
-      const { body } = await request(app).get("/projects/all").expect(200);
+      const { body } = await request(app)
+        .get("/projects/all")
+        .set("Authorization", `Bearer${token}`)
+        .expect(200);
 
       expect(body.projects).toHaveLength(expectedProjects.length);
       expect(body.projects[0].author.username).toBe(
@@ -82,6 +89,7 @@ describe("Given a projects router", () => {
 
       const { body } = await request(app)
         .delete(`/projects/delete/${idToDelete}`)
+        .set("Authorization", `Bearer${token}`)
         .expect(200);
       const projects = await Project.find();
 
@@ -94,7 +102,10 @@ describe("Given a projects router", () => {
     test("Then it should respond with { error: 'Validation Failed' } and status 500", async () => {
       const expectedResponse = { error: "Validation Failed" };
 
-      const { body } = await request(app).post(`/projects/new`).expect(500);
+      const { body } = await request(app)
+        .post(`/projects/new`)
+        .set("Authorization", `Bearer${token}`)
+        .expect(500);
 
       expect(body).toEqual(expectedResponse);
     });
@@ -111,6 +122,7 @@ describe("Given a projects router", () => {
 
       const { body } = await request(app)
         .post(`/projects/new`)
+        .set("Authorization", `Bearer${token}`)
         .send(project)
         .expect(201);
 
@@ -122,9 +134,10 @@ describe("Given a projects router", () => {
     test("Then it should respond with the updatedProject and status 200", async () => {
       const changedProperty = { preview: "picture.jpg" };
       const expectedStatus = 200;
-      const { body: projectsInTheDatabase } = await request(app).get(
-        "/projects/all"
-      );
+      const { body: projectsInTheDatabase } = await request(app)
+        .get("/projects/all")
+        .set("Authorization", `Bearer${token}`)
+        .expect(200);
 
       const modifiedProject = {
         ...projectsInTheDatabase.projects[0],
@@ -134,6 +147,7 @@ describe("Given a projects router", () => {
       const { body } = await request(app)
         .put("/projects/edit")
         .send(modifiedProject)
+        .set("Authorization", `Bearer${token}`)
         .expect(expectedStatus);
 
       expect(body).toHaveProperty("preview", changedProperty.preview);
