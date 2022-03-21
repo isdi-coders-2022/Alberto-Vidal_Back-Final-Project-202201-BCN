@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const Project = require("../../../database/models/Project");
 const {
   getAllProjects,
@@ -11,6 +13,24 @@ const mockProjectDelete = jest.spyOn(Project, "deleteOne");
 const mockProjectPopulate = jest.spyOn(Project, "populate");
 const mockProjectCreate = jest.spyOn(Project, "create");
 
+jest.mock("firebase/storage", () => ({
+  getStorage: () => ({}),
+  ref: () => ({}),
+  getDownloadURL: () => Promise.resolve("image.jpg"),
+  uploadBytes: () => Promise.resolve(),
+}));
+
+jest
+  .spyOn(fs, "rename")
+  .mockImplementation((imageOldName, imageName, callback) => {
+    callback();
+  });
+jest.spyOn(fs, "readFile").mockImplementation((imageName, callback) => {
+  callback();
+});
+
+jest.spyOn(path, "join").mockReturnThis("");
+
 describe("Given a getAllProjets controller", () => {
   describe("When it's called and database provides an array of projects", () => {
     test("Then it call method json of res with the array of projects", async () => {
@@ -21,7 +41,6 @@ describe("Given a getAllProjets controller", () => {
       mockProjectPopulate.mockImplementation(() =>
         Promise.resolve(expectedProjects)
       );
-
       const req = null;
       const res = { json: jest.fn() };
       const next = null;
@@ -109,9 +128,18 @@ describe("Given a deleteproject controller", () => {
 describe("Given a createNewProject controller", () => {
   describe("When it's called with a project in the request body", () => {
     test("Then it should call method status and json of res with 201 and the new project returned from the database", async () => {
+      const preview = {
+        fieldname: "preview",
+        originalname: "preview.jpg",
+        encoding: "7bit",
+        mimetype: "image/jpg",
+        destination: "uploads/",
+        filename: "93ec034d18753a982e662bc2fdf9a584",
+        path: "uploads/93ec034d18753a982e662bc2fdf9a584",
+        size: 8750,
+      };
       const project = {
         author: "author",
-        preview: "preview",
         production: "production",
         repo: "repo",
       };
@@ -124,7 +152,7 @@ describe("Given a createNewProject controller", () => {
         json: jest.fn(),
       };
       const next = null;
-      const req = { body: project };
+      const req = { body: project, file: preview };
       const expectedStatus = 201;
 
       await createNewProject(req, res, next);
