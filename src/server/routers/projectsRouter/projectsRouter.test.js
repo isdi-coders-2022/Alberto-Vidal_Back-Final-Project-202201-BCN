@@ -4,6 +4,7 @@ const { default: ObjectID } = require("bson-objectid");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const jsonwebtoken = require("jsonwebtoken");
+const path = require("path");
 const connectDB = require("../../../database");
 const Project = require("../../../database/models/Project");
 const app = require("../..");
@@ -120,18 +121,13 @@ describe("Given a projects router", () => {
 
   describe("When it receives a request at /new with method post with correct project inside", () => {
     test("Then it should respond with status 201 and the project with id", async () => {
-      jest.setTimeout(9000);
-
       const { body } = await request(app)
         .post(`/projects/new`)
         .set("Authorization", `Bearer${token}`)
         .field("author", user._id.toHexString())
         .field("repo", "repo")
         .field("production", "production")
-        .attach(
-          "preview",
-          "/Users/albertovidal/Documents/isdi/proyecto-final/projectsnap-back/uploads/test.png"
-        )
+        .attach("preview", path.resolve("uploads/test.png"))
         .expect(201);
 
       expect(body).toHaveProperty("id");
