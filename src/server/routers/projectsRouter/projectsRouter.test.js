@@ -120,8 +120,6 @@ describe("Given a projects router", () => {
 
   describe("When it receives a request at /new with method post with correct project inside", () => {
     test("Then it should respond with status 201 and the project with id", async () => {
-      jest.setTimeout(9000);
-
       const { body } = await request(app)
         .post(`/projects/new`)
         .set("Authorization", `Bearer${token}`)
