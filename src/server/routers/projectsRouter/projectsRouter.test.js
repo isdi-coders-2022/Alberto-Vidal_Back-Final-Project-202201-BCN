@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 const request = require("supertest");
 const { default: ObjectID } = require("bson-objectid");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const jsonwebtoken = require("jsonwebtoken");
+const path = require("path");
 const connectDB = require("../../../database");
 const Project = require("../../../database/models/Project");
 const app = require("../..");
@@ -10,6 +12,12 @@ const User = require("../../../database/models/User");
 
 jest.spyOn(jsonwebtoken, "verify").mockReturnValue();
 const token = "teouthoetnuhoenthuantuhs";
+jest.mock("firebase/storage", () => ({
+  getStorage: () => ({}),
+  ref: () => ({}),
+  getDownloadURL: () => Promise.resolve("image.jpg"),
+  uploadBytes: () => Promise.resolve(),
+}));
 
 let mongod;
 beforeAll(async () => {
@@ -113,17 +121,13 @@ describe("Given a projects router", () => {
 
   describe("When it receives a request at /new with method post with correct project inside", () => {
     test("Then it should respond with status 201 and the project with id", async () => {
-      const project = {
-        author: ObjectID().toHexString(),
-        preview: "preview",
-        repo: "repo",
-        production: "production",
-      };
-
       const { body } = await request(app)
         .post(`/projects/new`)
         .set("Authorization", `Bearer${token}`)
-        .send(project)
+        .field("author", user._id.toHexString())
+        .field("repo", "repo")
+        .field("production", "production")
+        .attach("preview", path.resolve("uploads/test.png"))
         .expect(201);
 
       expect(body).toHaveProperty("id");
