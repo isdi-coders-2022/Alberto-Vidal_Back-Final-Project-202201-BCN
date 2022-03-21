@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const { notFound, serverError } = require("./middlewares/errors");
 const projectsRouter = require("./routers/projectsRouter/projectsRouter");
-const userRouter = require("./routers/userRouter./userRouter");
+const userRouter = require("./routers/userRouter/userRouter");
 const auth = require("./middlewares/auth/auth");
 
 const app = express();
