@@ -19,7 +19,12 @@ const router = express.Router();
 
 router.get("/all", getAllProjects);
 router.delete("/delete/:id", deleteProject);
-router.post("/new", upload.single("preview"), createNewProject);
+router.post(
+  "/new",
+  upload.single("preview"),
+  validate(createProjectValidator),
+  createNewProject
+);
 router.put("/edit", validate(editProjectValidator), editProject);
 
 module.exports = router;
