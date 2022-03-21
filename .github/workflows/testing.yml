@@ -3,6 +3,7 @@ name: Testing on push
 on: push
 env:
   JWT_SECRET: ${{secrets.JWT_SECRET}}
+  FIREBASE: ${{secrets.FIREBASE}}
 
 jobs:
   test:
