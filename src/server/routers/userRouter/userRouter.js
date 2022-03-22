@@ -1,5 +1,6 @@
 const express = require("express");
 const { validate } = require("express-validation");
+const multer = require("multer");
 const {
   userLogin,
   userRegister,
@@ -9,9 +10,16 @@ const {
   registerValidator,
 } = require("../../middlewares/validators/userValidators");
 
+const upload = multer({ dest: "uploads/" });
+
 const router = express.Router();
 
 router.post("/login", validate(loginValidator), userLogin);
-router.post("/register", validate(registerValidator), userRegister);
+router.post(
+  "/register",
+  upload.single("avatar"),
+  validate(registerValidator),
+  userRegister
+);
 
 module.exports = router;
