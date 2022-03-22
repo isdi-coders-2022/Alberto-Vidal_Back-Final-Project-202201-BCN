@@ -1,17 +1,15 @@
 /* eslint-disable no-param-reassign */
 require("dotenv").config();
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
-const {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  getStorage,
-} = require("firebase/storage");
-const { initializeApp } = require("@firebase/app");
+const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 // eslint-disable-next-line no-unused-vars
 const User = require("../../../database/models/User");
 const Project = require("../../../database/models/Project");
+const storage = require("../../firebase");
+
+const resourcesFolder = "uploads";
+const firebaseDestinationFolder = "previews";
 
 const getAllProjects = async (req, res, next) => {
   try {
@@ -46,83 +44,62 @@ const deleteProject = async (req, res, next) => {
   }
 };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDb5HJ-t1BUkT4KC7rIUis72YuDbD-w8Wk",
-  authDomain: "projectsnap-47388.firebaseapp.com",
-  projectId: "projectsnap-47388",
-  storageBucket: "projectsnap-47388.appspot.com",
-  messagingSenderId: "326750537675",
-  appId: "1:326750537675:web:333abd16eab2c3819e184e",
+const createNewProject = async (req, res, next) => {
+  try {
+    const imageName = req.file.originalname;
+    const imagePath = path.join(resourcesFolder, imageName);
+    await fs.rename(path.join(resourcesFolder, req.file.filename), imagePath);
+
+    const image = await fs.readFile(imagePath);
+
+    const imageReference = ref(
+      storage,
+      `${firebaseDestinationFolder}/${req.file.originalname}`
+    );
+    await uploadBytes(imageReference, image);
+    const imageUrl = await getDownloadURL(imageReference);
+    const newProject = await Project.create({
+      ...req.body,
+      preview: imageUrl,
+    });
+    const populatedProject = await newProject.populate(
+      "author",
+      "username avatar id"
+    );
+    res.status(201).json(populatedProject);
+  } catch (error) {
+    if (req.file) {
+      await fs.unlink(path.join(resourcesFolder, req.file.filename));
+    }
+    error.message = "error creating project";
+    next(error);
+  }
 };
 
-const fireBaseApp = initializeApp(firebaseConfig);
-const storage = getStorage(fireBaseApp);
-
-const createNewProject = async (req, res, next) =>
-  new Promise((resolve) => {
-    try {
-      const imageOldName = path.join("uploads", req.file.filename);
-      const imageName = path.join("uploads", req.file.originalname);
-      fs.rename(imageOldName, imageName, (error) => {
-        if (error) {
-          error.message = "error seting image name";
-          next(error);
-          resolve();
-        } else {
-          fs.readFile(imageName, async (err, image) => {
-            if (err) {
-              err.message = "unable to read image";
-              next(err);
-              resolve();
-            } else {
-              const projectReference = ref(
-                storage,
-                `previews/${req.file.originalname}`
-              );
-              await uploadBytes(projectReference, image);
-              const imageUrl = await getDownloadURL(projectReference);
-              const newProject = req.body;
-              const newProjectCreated = await Project.create({
-                ...newProject,
-                preview: imageUrl,
-              });
-              const populatedProject = await newProjectCreated.populate(
-                "author",
-                "username avatar id"
-              );
-              res.status(201).json(populatedProject);
-              resolve();
-            }
-          });
-        }
-      });
-    } catch (error) {
-      if (req.file) {
-        fs.unlink(path.join("uploads", req.file.filename));
-      }
-      error.message = "error creating project";
-      next(error);
-      resolve();
-    }
-  });
-
 const editProject = async (req, res, next) => {
-  const projectToUpdate = req.body;
   try {
+    const imageName = req.file.originalname;
+    const imagePath = path.join(resourcesFolder, imageName);
+    await fs.rename(path.join(resourcesFolder, req.file.filename), imagePath);
+
+    const image = await fs.readFile(imagePath);
+
+    const imageReference = ref(
+      storage,
+      `${firebaseDestinationFolder}/${imageName}`
+    );
+    await uploadBytes(imageReference, image);
+    const imageUrl = await getDownloadURL(imageReference);
+    const ProjectToUpdate = { ...req.body, preview: imageUrl };
     const updatedProject = await Project.findByIdAndUpdate(
-      projectToUpdate.id,
-      {
-        ...projectToUpdate,
-        author: projectToUpdate.author.id,
-      },
+      req.body.id,
+      ProjectToUpdate,
       { new: true }
     );
-
     const populatedUpdatedProject = await updatedProject.populate(
       "author",
       "username avatar id"
     );
-
     res.status(200).json(populatedUpdatedProject);
   } catch (error) {
     error.message = "error updating project";
