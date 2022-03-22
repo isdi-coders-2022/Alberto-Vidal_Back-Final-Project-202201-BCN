@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
 const Project = require("../../../database/models/Project");
 const {
@@ -20,14 +20,8 @@ jest.mock("firebase/storage", () => ({
   uploadBytes: () => Promise.resolve(),
 }));
 
-jest
-  .spyOn(fs, "rename")
-  .mockImplementation((imageOldName, imageName, callback) => {
-    callback();
-  });
-jest.spyOn(fs, "readFile").mockImplementation((imageName, callback) => {
-  callback();
-});
+jest.spyOn(fs, "rename").mockResolvedValue("path");
+jest.spyOn(fs, "readFile").mockResolvedValue({});
 
 jest.spyOn(path, "join").mockReturnThis("");
 
@@ -109,6 +103,7 @@ describe("Given a deleteproject controller", () => {
   describe("When it's called and the method delete of project throws an error", () => {
     test("Then it should call function next with an error with message 'error deleting project'", async () => {
       const expectedErrorMessage = "error deleting project";
+      mockProjectDelete.mockRejectedValue(new Error());
       const next = jest.fn();
       const res = null;
       const req = {
