@@ -25,6 +25,11 @@ router.post(
   validate(createProjectValidator),
   createNewProject
 );
-router.put("/edit", validate(editProjectValidator), editProject);
+router.put(
+  "/edit",
+  upload.single("preview"),
+  validate(editProjectValidator),
+  editProject
+);
 
 module.exports = router;

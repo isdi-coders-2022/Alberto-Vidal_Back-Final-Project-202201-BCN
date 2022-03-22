@@ -20,7 +20,7 @@ jest.mock("firebase/storage", () => ({
   uploadBytes: () => Promise.resolve(),
 }));
 
-jest.spyOn(fs, "rename").mockResolvedValue("path");
+jest.spyOn(fs, "rename").mockResolvedValue(undefined);
 jest.spyOn(fs, "readFile").mockResolvedValue({});
 
 jest.spyOn(path, "join").mockReturnThis("");

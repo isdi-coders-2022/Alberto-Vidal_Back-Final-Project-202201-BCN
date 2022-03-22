@@ -10,15 +10,10 @@ const createProjectValidator = {
 
 const editProjectValidator = {
   body: Joi.object({
-    author: Joi.object({
-      username: Joi.string().required(),
-      id: Joi.string().required(),
-      avatar: Joi.string().required(),
-    }).required(),
-    preview: Joi.string().required(),
+    author: Joi.string().required(),
     production: Joi.string(),
     repo: Joi.string().required(),
-    id: Joi.string().required(),
+    id: Joi.string().hex().length(24).required(),
     likes: Joi.number().required(),
   }),
 };

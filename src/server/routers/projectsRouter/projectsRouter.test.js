@@ -136,25 +136,25 @@ describe("Given a projects router", () => {
 
   describe("When it receives a request at /update with method post and a modified project", () => {
     test("Then it should respond with the updatedProject and status 200", async () => {
-      const changedProperty = { preview: "picture.jpg" };
       const expectedStatus = 200;
+      const expectedLikes = 4;
       const { body: projectsInTheDatabase } = await request(app)
         .get("/projects/all")
         .set("Authorization", `Bearer${token}`)
         .expect(200);
 
-      const modifiedProject = {
-        ...projectsInTheDatabase.projects[0],
-        ...changedProperty,
-      };
-
       const { body } = await request(app)
         .put("/projects/edit")
-        .send(modifiedProject)
         .set("Authorization", `Bearer${token}`)
+        .field("author", projectsInTheDatabase.projects[0].author.id)
+        .field("repo", projectsInTheDatabase.projects[0].repo)
+        .field("likes", "4")
+        .field("id", projectsInTheDatabase.projects[0].id)
+        .field("production", "modified field")
+        .attach("preview", path.resolve("uploads/test.png"))
         .expect(expectedStatus);
 
-      expect(body).toHaveProperty("preview", changedProperty.preview);
+      expect(body).toHaveProperty("likes", expectedLikes);
     });
   });
 });

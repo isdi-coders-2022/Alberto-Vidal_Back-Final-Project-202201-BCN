@@ -9,6 +9,7 @@ const Project = require("../../../database/models/Project");
 const storage = require("../../firebase");
 
 const resourcesFolder = "uploads";
+const firebaseDestinationFolder = "previews";
 
 const getAllProjects = async (req, res, next) => {
   try {
@@ -45,27 +46,30 @@ const deleteProject = async (req, res, next) => {
 
 const createNewProject = async (req, res, next) => {
   try {
-    const imageName = path.join(resourcesFolder, req.file.originalname);
-    await fs.rename(path.join(resourcesFolder, req.file.filename), imageName);
+    const imageName = req.file.originalname;
+    const imagePath = path.join(resourcesFolder, imageName);
+    await fs.rename(path.join(resourcesFolder, req.file.filename), imagePath);
 
-    const image = await fs.readFile(imageName);
+    const image = await fs.readFile(imagePath);
 
-    const projectReference = ref(storage, `previews/${req.file.originalname}`);
-    await uploadBytes(projectReference, image);
-    const imageUrl = await getDownloadURL(projectReference);
-    const newProject = req.body;
-    const newProjectCreated = await Project.create({
-      ...newProject,
+    const imageReference = ref(
+      storage,
+      `${firebaseDestinationFolder}/${req.file.originalname}`
+    );
+    await uploadBytes(imageReference, image);
+    const imageUrl = await getDownloadURL(imageReference);
+    const newProject = await Project.create({
+      ...req.body,
       preview: imageUrl,
     });
-    const populatedProject = await newProjectCreated.populate(
+    const populatedProject = await newProject.populate(
       "author",
       "username avatar id"
     );
     res.status(201).json(populatedProject);
   } catch (error) {
     if (req.file) {
-      fs.unlink(path.join(resourcesFolder, req.file.filename));
+      await fs.unlink(path.join(resourcesFolder, req.file.filename));
     }
     error.message = "error creating project";
     next(error);
@@ -73,22 +77,29 @@ const createNewProject = async (req, res, next) => {
 };
 
 const editProject = async (req, res, next) => {
-  const projectToUpdate = req.body;
   try {
+    const imageName = req.file.originalname;
+    const imagePath = path.join(resourcesFolder, imageName);
+    await fs.rename(path.join(resourcesFolder, req.file.filename), imagePath);
+
+    const image = await fs.readFile(imagePath);
+
+    const imageReference = ref(
+      storage,
+      `${firebaseDestinationFolder}/${imageName}`
+    );
+    await uploadBytes(imageReference, image);
+    const imageUrl = await getDownloadURL(imageReference);
+    const ProjectToUpdate = { ...req.body, preview: imageUrl };
     const updatedProject = await Project.findByIdAndUpdate(
-      projectToUpdate.id,
-      {
-        ...projectToUpdate,
-        author: projectToUpdate.author.id,
-      },
+      req.body.id,
+      ProjectToUpdate,
       { new: true }
     );
-
     const populatedUpdatedProject = await updatedProject.populate(
       "author",
       "username avatar id"
     );
-
     res.status(200).json(populatedUpdatedProject);
   } catch (error) {
     error.message = "error updating project";
