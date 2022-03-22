@@ -1,9 +1,23 @@
 const bcrypt = require("bcrypt");
+const fs = require("fs/promises");
+const path = require("path");
 const User = require("../../../database/models/User");
 const { userLogin, userRegister } = require("./userControllers");
 
 const mockFindOneUser = jest.spyOn(User, "findOne");
 const mockCreateUser = jest.spyOn(User, "create");
+
+jest.mock("firebase/storage", () => ({
+  getStorage: () => ({}),
+  ref: () => ({}),
+  getDownloadURL: () => Promise.resolve("image.jpg"),
+  uploadBytes: () => Promise.resolve(),
+}));
+
+jest.spyOn(fs, "rename").mockResolvedValue(undefined);
+jest.spyOn(fs, "readFile").mockResolvedValue({});
+
+jest.spyOn(path, "join").mockReturnThis("");
 
 describe("Given a login user controller", () => {
   describe("When it's called with a username in the request that is not registered", () => {
@@ -100,9 +114,20 @@ describe("Given a userRegister Controller", () => {
 
   describe("When it's called with a correct user in the request", () => {
     test("Then it should call methods status and json of res with 201 and {created: username}", async () => {
+      jest.spyOn(bcrypt, "hash").mockResolvedValue("password");
+      const avatar = {
+        fieldname: "avatar",
+        originalname: "avatar.jpg",
+        encoding: "7bit",
+        mimetype: "image/jpg",
+        destination: "uploads/",
+        filename: "93ec034d18753a982e662bc2fdf9a584",
+        path: "uploads/93ec034d18753a982e662bc2fdf9a584",
+        size: 8750,
+      };
       const user = { username: "paco", password: "1234" };
       mockCreateUser.mockResolvedValue(null);
-      const req = { body: user };
+      const req = { body: user, file: avatar };
       const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const next = null;
       const expectedStatus = 201;

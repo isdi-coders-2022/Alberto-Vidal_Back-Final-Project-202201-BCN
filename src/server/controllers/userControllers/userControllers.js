@@ -1,7 +1,14 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs/promises");
+const path = require("path");
+const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 const User = require("../../../database/models/User");
+const storage = require("../../firebase");
+
+const resourcesFolder = "uploads";
+const firebaseDestinationFolder = "avatars";
 
 const userLogin = async (req, res, next) => {
   const invalidCredentialsError = {
@@ -36,12 +43,25 @@ const userLogin = async (req, res, next) => {
 };
 
 const userRegister = async (req, res, next) => {
-  const user = req.body;
-  const userWithHashedPassword = {
-    ...user,
-    password: await bcrypt.hash(user.password, 10),
-  };
   try {
+    const avatarName = req.file.originalname;
+    const avatarPath = path.join(resourcesFolder, avatarName);
+    await fs.rename(path.join(resourcesFolder, req.file.filename), avatarPath);
+
+    const avatar = await fs.readFile(avatarPath);
+
+    const avatarReference = ref(
+      storage,
+      `${firebaseDestinationFolder}/${avatarName}`
+    );
+    await uploadBytes(avatarReference, avatar);
+    const avatarUrl = await getDownloadURL(avatarReference);
+
+    const user = { ...req.body, avatar: avatarUrl };
+    const userWithHashedPassword = {
+      ...user,
+      password: await bcrypt.hash(user.password, 10),
+    };
     await User.create(userWithHashedPassword);
 
     res.status(201).json({ created: user.username });

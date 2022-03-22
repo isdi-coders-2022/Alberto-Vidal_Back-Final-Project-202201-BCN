@@ -12,7 +12,6 @@ const registerValidator = {
     username: Joi.string().required(),
     password: Joi.string().required(),
     name: Joi.string().required(),
-    avatar: Joi.string().required(),
   }),
 };
 
