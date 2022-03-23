@@ -2,7 +2,7 @@ const express = require("express");
 const { validate } = require("express-validation");
 const multer = require("multer");
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "uploads/", limits: { fileSize: 1331133 } });
 
 const {
   getAllProjects,
