@@ -22,6 +22,7 @@ jest.mock("firebase/storage", () => ({
 
 jest.spyOn(fs, "rename").mockResolvedValue(undefined);
 jest.spyOn(fs, "readFile").mockResolvedValue({});
+const fsUnlink = jest.spyOn(fs, "unlink").mockResolvedValue(null);
 
 jest.spyOn(path, "join").mockReturnThis("");
 
@@ -158,6 +159,32 @@ describe("Given a createNewProject controller", () => {
   });
 
   describe("When it's called with a project in the request body and the connection with db fails", () => {
+    test("Then it should call next with ane rror with message 'error creating project' and call unlink method of fs", async () => {
+      const errorMessage = "error creating project";
+      mockProjectCreate.mockRejectedValue(new Error());
+      const res = null;
+      const next = jest.fn();
+      const preview = {
+        fieldname: "preview",
+        originalname: "preview.jpg",
+        encoding: "7bit",
+        mimetype: "image/jpg",
+        destination: "uploads/",
+        filename: "93ec034d18753a982e662bc2fdf9a584",
+        path: "uploads/93ec034d18753a982e662bc2fdf9a584",
+        size: 8750,
+      };
+      const req = { body: {}, file: preview };
+
+      await createNewProject(req, res, next);
+
+      expect(fsUnlink).toHaveBeenCalled();
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it's called without a file and an error occurs ", () => {
     test("Then it should call next with ane rror with message 'error creating project'", async () => {
       const errorMessage = "error creating project";
       mockProjectCreate.mockRejectedValue(new Error());
