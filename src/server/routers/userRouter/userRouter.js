@@ -10,7 +10,7 @@ const {
   registerValidator,
 } = require("../../middlewares/validators/userValidators");
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "uploads/", limits: { fileSize: 1331133 } });
 
 const router = express.Router();
 
